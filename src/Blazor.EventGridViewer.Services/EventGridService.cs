@@ -1,4 +1,5 @@
-﻿using Blazor.EventGridViewer.Core.CustomEventArgs;
+﻿using Azure.Messaging.EventGrid;
+using Blazor.EventGridViewer.Core.CustomEventArgs;
 using Blazor.EventGridViewer.Core.Models;
 using Blazor.EventGridViewer.Services.Interfaces;
 using System;
@@ -12,15 +13,15 @@ namespace Blazor.EventGridViewer.Services
     {
         /// <inheritdoc/>
         public event EventHandler<EventGridEventArgs> EventReceived;
-        private readonly IAdapter<EventGridEventModel, EventGridViewerEventModel> _eventGridEventModelAdapter;
+        private readonly IAdapter<EventGridEvent, EventGridViewerEventModel> _eventGridEventModelAdapter;
 
-        public EventGridService(IAdapter<EventGridEventModel, EventGridViewerEventModel> eventGridEventModelAdapter)
+        public EventGridService(IAdapter<EventGridEvent, EventGridViewerEventModel> eventGridEventModelAdapter)
         {
             _eventGridEventModelAdapter = eventGridEventModelAdapter;
         }
 
         /// <inheritdoc/>
-        public bool RaiseEventReceivedEvent(EventGridEventModel model)
+        public bool RaiseEventReceivedEvent(EventGridEvent model)
         {
             if (string.IsNullOrWhiteSpace(model.EventType) || string.IsNullOrWhiteSpace(model.Subject))
                 return false;

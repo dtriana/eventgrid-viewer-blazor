@@ -1,4 +1,5 @@
-﻿using Blazor.EventGridViewer.Core.Models;
+﻿using Azure.Messaging.EventGrid;
+using Blazor.EventGridViewer.Core.Models;
 using Blazor.EventGridViewer.Services.Adapters;
 using Blazor.EventGridViewer.Services.Interfaces;
 using Xunit;
@@ -17,7 +18,7 @@ namespace Blazor.EventGridViewer.Unit.Tests
         public void EventGridEventModelAdatperConvertNullThrowsExceptionTest()
         {
             // Arrange
-            IAdapter<EventGridEventModel, EventGridViewerEventModel> adapter = new EventGridEventModelAdapter();
+            IAdapter<EventGridEvent, EventGridViewerEventModel> adapter = new EventGridEventModelAdapter();
 
             // Act
             var exception = Record.Exception(() => adapter.Convert(null));
@@ -33,7 +34,7 @@ namespace Blazor.EventGridViewer.Unit.Tests
         public void EventGridEventModelAdapterConvertCanConvertEventGridEventModel()
         {
             // Arrange
-            IAdapter<EventGridEventModel, EventGridViewerEventModel> adapter = new EventGridEventModelAdapter();
+            IAdapter<EventGridEvent, EventGridViewerEventModel> adapter = new EventGridEventModelAdapter();
             var eventGridEventModel = new EventGridEventModel() { Data = "SomeJson", EventType = "SomeEventType", Id = "SomeId", Subject = "SomeSubject" };
 
             // Act

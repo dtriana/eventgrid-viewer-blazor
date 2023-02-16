@@ -1,5 +1,5 @@
-﻿using Blazor.EventGridViewer.Core.CustomEventArgs;
-using Blazor.EventGridViewer.Core.Models;
+﻿using Azure.Messaging.EventGrid;
+using Blazor.EventGridViewer.Core.CustomEventArgs;
 using System;
 
 namespace Blazor.EventGridViewer.Services.Interfaces
@@ -18,6 +18,6 @@ namespace Blazor.EventGridViewer.Services.Interfaces
         /// </summary>
         /// <param name="model"></param>
         /// <returns>Boolean</returns>
-        bool RaiseEventReceivedEvent(EventGridEventModel model);
+        bool RaiseEventReceivedEvent(EventGridEvent model);
     }
 }

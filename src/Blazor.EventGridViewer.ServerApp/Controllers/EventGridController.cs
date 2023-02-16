@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.Reflection;
 using System.Threading.Tasks;
 using Azure.Messaging.EventGrid;
 using Azure.Messaging.EventGrid.SystemEvents;
-using Blazor.EventGridViewer.Core.Models;
 using Blazor.EventGridViewer.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,12 +16,10 @@ namespace Blazor.EventGridViewer.ServerApp.Controllers
     public class EventGridController : ControllerBase
     {
         private readonly IEventGridService _eventGridService;
-        private readonly IAdapter<string, List<EventGridEventModel>> _eventGridSchemaAdapter;
 
-        public EventGridController(IEventGridService eventGridService, IAdapter<string, List<EventGridEventModel>> eventGridSchemaAdapter)
+        public EventGridController(IEventGridService eventGridService)
         {
             _eventGridService = eventGridService;
-            _eventGridSchemaAdapter = eventGridSchemaAdapter;
         }
 
         /// <summary>
@@ -50,28 +43,27 @@ namespace Blazor.EventGridViewer.ServerApp.Controllers
 
             try
             {
-                // using StreamReader due to changes in .Net Core 3 serializer ie ValueKind
-                using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
+                var events = await BinaryData.FromStreamAsync(Request.Body);
+                var eventGridEvents = EventGridEvent.ParseMany(events);
+                foreach (var eventGridEvent in eventGridEvents)
                 {
-                    var json = await reader.ReadToEndAsync();
-                    var eventGridEventModels = _eventGridSchemaAdapter.Convert(json);
-
-                    foreach (EventGridEventModel model in eventGridEventModels)
+                    // Handle system events
+                    if (eventGridEvent.TryGetSystemEventData(out object eventData))
                     {
-                        // EventGrid validation message
-                        if (model.EventType == SystemEventNames.EventGridSubscriptionValidation)
+                        // Handle the subscription validation event
+                        if (eventData is SubscriptionValidationEventData subscriptionValidationEventData)
                         {
-                            var eventData = ((JsonObject)model.EventData).Deserialize<SubscriptionValidationEventData>();
-                            var responseData = new SubscriptionValidationResponse()
+                            var responseData = new
                             {
-                                ValidationResponse = eventData.ValidationCode
+                                ValidationResponse = subscriptionValidationEventData.ValidationCode
                             };
-                            return Ok(responseData);
+
+                            return new OkObjectResult(responseData);
                         }
-                        // handle all other events
-                        this.HandleEvent(model);
-                        return result;
                     }
+                    // handle all other events
+                    this.HandleEvent(eventGridEvent);
+                    return result;
                 }
             }
             catch (Exception ex)
@@ -86,7 +78,7 @@ namespace Blazor.EventGridViewer.ServerApp.Controllers
         /// Handle EventGrid Event
         /// </summary>
         /// <param name="EventGridEventModel"></param>
-        private void HandleEvent(EventGridEventModel model)
+        private void HandleEvent(EventGridEvent model)
         {
             _eventGridService.RaiseEventReceivedEvent(model);
         }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Blazor.EventGridViewer.Services.Adapters;
 using Blazor.EventGridViewer.Core.Models;
 using System.Collections.Generic;
+using Azure.Messaging.EventGrid;
 
 namespace Blazor.EventGridViewer.ServerApp
 {
@@ -46,8 +47,7 @@ namespace Blazor.EventGridViewer.ServerApp
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<IEventGridIdentifySchemaService, EventGridIdentifySchemaService>();
-            services.AddScoped<IAdapter<string, List<EventGridEventModel>>, EventGridSchemaAdapter>();
-            services.AddSingleton<IAdapter<EventGridEventModel, EventGridViewerEventModel>, EventGridEventModelAdapter>();
+            services.AddSingleton<IAdapter<EventGridEvent, EventGridViewerEventModel>, EventGridEventModelAdapter>();
             services.AddSingleton<IEventGridService, EventGridService>();
             services.AddScoped<IEventGridViewerService, EventGridViewerService>();
         }
