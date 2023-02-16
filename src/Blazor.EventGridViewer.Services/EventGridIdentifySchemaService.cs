@@ -1,7 +1,7 @@
 ﻿using Blazor.EventGridViewer.Core;
 using Blazor.EventGridViewer.Services.Interfaces;
-using Newtonsoft.Json.Linq;
 using System;
+using System.Text.Json.Nodes;
 
 namespace Blazor.EventGridViewer.Services
 {
@@ -33,10 +33,10 @@ namespace Blazor.EventGridViewer.Services
             try
             {
                 // Attempt to read one JSON object. 
-                var eventData = JObject.Parse(json);
+                var eventData = JsonObject.Parse(json);
 
                 // Check for the spec version property.
-                var version = eventData["specversion"].Value<string>();
+                var version = eventData["specversion"].GetValue<string>();
                 if (!string.IsNullOrEmpty(version)) return true;
             }
             catch (Exception e)

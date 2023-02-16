@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BlazorStrap;
 using Blazor.EventGridViewer.Services.Interfaces;
 using Blazor.EventGridViewer.Services;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Blazor.EventGridViewer.Services.Adapters;
-using Microsoft.Azure.EventGrid.Models;
 using Blazor.EventGridViewer.Core.Models;
 using System.Collections.Generic;
 
@@ -47,7 +45,6 @@ namespace Blazor.EventGridViewer.ServerApp
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddBootstrapCss();
             services.AddScoped<IEventGridIdentifySchemaService, EventGridIdentifySchemaService>();
             services.AddScoped<IAdapter<string, List<EventGridEventModel>>, EventGridSchemaAdapter>();
             services.AddSingleton<IAdapter<EventGridEventModel, EventGridViewerEventModel>, EventGridEventModelAdapter>();

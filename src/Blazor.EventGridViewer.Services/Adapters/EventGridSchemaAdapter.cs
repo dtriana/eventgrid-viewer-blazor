@@ -1,10 +1,11 @@
-﻿using Blazor.EventGridViewer.Core;
+﻿using Azure.Messaging;
+using Azure.Messaging.EventGrid;
+using Blazor.EventGridViewer.Core;
 using Blazor.EventGridViewer.Core.Models;
 using Blazor.EventGridViewer.Services.Interfaces;
-using Microsoft.Azure.EventGrid.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Blazor.EventGridViewer.Services.Adapters
 {
@@ -47,9 +48,9 @@ namespace Blazor.EventGridViewer.Services.Adapters
         private List<EventGridEventModel> AdaptCloudEvent(string t)
         {
             List<EventGridEventModel> models = new List<EventGridEventModel>();
-            var cloudEvent = JsonConvert.DeserializeObject<CloudEvent>(t);
+            var cloudEvent = JsonSerializer.Deserialize<CloudEvent>(t);
 
-            var json = JsonConvert.SerializeObject(cloudEvent, Formatting.Indented);
+            var json = JsonSerializer.Serialize(cloudEvent, new JsonSerializerOptions { WriteIndented = true });
             EventGridEventModel model = new EventGridEventModel()
             {
                 Id = cloudEvent.Id,
@@ -57,7 +58,7 @@ namespace Blazor.EventGridViewer.Services.Adapters
                 Subject = string.IsNullOrEmpty(cloudEvent.Subject) ? cloudEvent.Type : cloudEvent.Subject,
                 Data = json,
                 EventData = cloudEvent.Data,
-                EventTime = cloudEvent.Time
+                EventTime = cloudEvent.Time.ToString()
             };
             models.Add(model);
 
@@ -72,11 +73,11 @@ namespace Blazor.EventGridViewer.Services.Adapters
         private List<EventGridEventModel> AdaptEventGridEvent(string t)
         {
             List<EventGridEventModel> models = new List<EventGridEventModel>();
-            var eventGridEvents = JsonConvert.DeserializeObject<List<EventGridEvent>>(t);
+            var eventGridEvents = JsonSerializer.Deserialize<List<EventGridEvent>>(t);
 
             foreach (var eventGridEvent in eventGridEvents)
             {
-                var json = JsonConvert.SerializeObject(eventGridEvent, Formatting.Indented);
+                var json = JsonSerializer.Serialize(eventGridEvent, new JsonSerializerOptions { WriteIndented = true });
                 EventGridEventModel model = new EventGridEventModel()
                 {
                     Id = eventGridEvent.Id,
