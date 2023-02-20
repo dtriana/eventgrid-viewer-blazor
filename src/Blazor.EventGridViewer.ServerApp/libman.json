@@ -3,6 +3,7 @@
   "defaultProvider": "unpkg",
   "libraries": [
     {
+      "provider": "unpkg",
       "library": "bootstrap@5.2.3",
       "destination": "wwwroot/lib/bootstrap/"
     }

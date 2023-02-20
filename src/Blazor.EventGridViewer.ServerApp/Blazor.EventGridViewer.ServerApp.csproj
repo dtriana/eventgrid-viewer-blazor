@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.EventGrid" Version="4.13.0" />
-    <PackageReference Include="BlazorStrap" Version="5.1.100" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="6.0.14" />
   </ItemGroup>
 

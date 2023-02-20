@@ -2,6 +2,7 @@
 using Blazor.EventGridViewer.Core.Models;
 using Blazor.EventGridViewer.Services.Interfaces;
 using System;
+using System.Text.Json;
 
 namespace Blazor.EventGridViewer.Services.Adapters
 {
@@ -22,7 +23,7 @@ namespace Blazor.EventGridViewer.Services.Adapters
 
             EventGridViewerEventModel model = new()
             {
-                Data = t.Data.ToString(),
+                Data = JsonSerializer.Serialize(JsonDocument.Parse(t.Data.ToString()), new JsonSerializerOptions { WriteIndented = true }),
                 EventType = t.EventType,
                 Subject = t.Subject,
                 Id = t.Id,

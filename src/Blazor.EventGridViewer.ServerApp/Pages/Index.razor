@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using BlazorStrap;
-
 
 <div class="container">
     <div class="row">
@@ -16,22 +14,20 @@
 <hr class="mt-5 mb-5" />
 
 <div class="accordion">
-    <BSCollapseGroup>
-        @foreach (var model in Models)
-        {
-            <BSCollapseItem @key="@model.EventGridViewerEventId">
-                <BSCard CardType="CardType.Card">
-                    <BSCard CardType="CardType.Header">
-                        <BSCollapseToggle IsLink="true">@model.EventType - @model.Subject</BSCollapseToggle>
-                    </BSCard>
-                    <BSCollapse>
-                        <BSCard CardType="CardType.Body">
-                            <BSCard CardType="CardType.Text"><pre><code class="language-json">@model.Data</code></pre></BSCard>
-                            <span role="button" title="Copy Data"><i class="fa fa-copy fa-3x eventgrid-viewer-blazor-button" aria-hidden="true" @onclick="@(() => onCopyClick(model.Data))"></i></span>
-                        </BSCard>
-                    </BSCollapse>
-                </BSCard>
-            </BSCollapseItem>
-        }
-    </BSCollapseGroup>
+    @foreach (var model in Models)
+    {
+        <div class="card" @key="@model.EventGridViewerEventId">
+            <div class="card-header" data-bs-toggle="collapse" href="#collapse_@model.EventGridViewerEventId">
+                <a>@model.EventType - @model.Subject</a>
+            </div>
+            <div>
+                <div class="collapse" id="collapse_@model.EventGridViewerEventId">
+                    <div class="card-body">
+                        <p><pre><code class="language-json">@model.Data</code></pre></p>
+                        <span role="button" title="Copy Data"><i class="fa fa-copy fa-3x eventgrid-viewer-blazor-button" aria-hidden="true" @onclick="@(() => onCopyClick(model.Data))"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
